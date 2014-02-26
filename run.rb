@@ -23,6 +23,7 @@ p b.moves.count
   ['a5', 0],
   ['f3', 8]]].each do |moves|
   b = Game.new
+  b.initialize_pieces
   moves.each do |space, move|
     b.move b[space].moves(b)[move]
     b.print

@@ -10,7 +10,7 @@ class Piece
   end
   
   def move space
-    Move.new(position, space)
+    Move.new(position, space, self)
   end
   
   def move_possible? board, coord
@@ -23,8 +23,10 @@ class Piece
     rank, file = Util.space2coord(position)
     vectors.each do |v_f, v_r|
       coord = [rank + v_r, file + v_f]
-      while move_possible? board, coord
+      capture = false
+      while move_possible?(board, coord) and !capture
         ret << move(Util.coord2space(coord))
+        capture = true if board[Util.coord2space(coord)]
         coord = [coord[0] + v_r, coord[1] + v_f]
       end
     end
@@ -51,6 +53,8 @@ class Piece
 end
 
 class Rook < Piece
+  def self.to_s; 'R'; end
+  
   def to_s
     super '♖', '♜'
   end
@@ -61,6 +65,8 @@ class Rook < Piece
 end
 
 class Knight < Piece
+  def self.to_s; 'N'; end
+  
   def to_s
     super '♘', '♞'
   end
@@ -72,6 +78,8 @@ class Knight < Piece
 end
 
 class Bishop < Piece
+  def self.to_s; 'B'; end
+  
   def to_s
     super '♗', '♝'
   end
@@ -82,6 +90,8 @@ class Bishop < Piece
 end
 
 class Queen < Piece
+  def self.to_s; 'Q'; end
+  
   def to_s
     super '♕', '♛'
   end
@@ -94,6 +104,8 @@ class Queen < Piece
 end
 
 class King < Piece
+  def self.to_s; 'K'; end
+  
   def to_s
     super '♔', '♚'
   end
@@ -106,6 +118,8 @@ class King < Piece
 end
 
 class Pawn < Piece
+  def self.to_s; ''; end
+  
   def to_s
     super '♙', '♟'
   end

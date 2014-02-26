@@ -9,7 +9,6 @@ class Game
     @turn = :white
     @pieces = []
     @grid = 8.times.map{ 8.times.map{ [nil] } }
-    initialize_pieces
   end
   
   def initialize_pieces
@@ -97,7 +96,7 @@ class Game
   
   def winning?
     all_moves.any? do |m|
-      after_move(m){king.taken?}
+      after_move(m){king and king.taken?}
     end
   end
   
@@ -135,6 +134,7 @@ class Game
     if lost?
       toggle_turn
       puts "#{turn} wins"
+      toggle_turn
     else
       puts "#{turn}'s turn"
     end
@@ -142,16 +142,13 @@ class Game
   end
 end
 
-class Action
-  attr_accessor :action, :space, :piece, :piece_taken
-  def initialize *args
-    @action, @space, @piece = args
-  end
-end
-
 class Move
-  attr_accessor :start, :end
+  attr_accessor :start, :end, :piece
   def initialize *args
-    @start, @end = args
+    @start, @end, @piece = args
+  end
+  
+  def to_s
+    "#{piece.class.to_s}#{start}-#{self.end}"
   end
 end
