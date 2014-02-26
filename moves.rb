@@ -2,6 +2,7 @@ require 'game'
 
 b = Game.new
 b.print
+moves = []
 
 while true
   print '> '
@@ -14,14 +15,33 @@ while true
         puts "#{m}: #{b.moves.count}"
       end
     end
-  when /^a (white|black) (Rook|Knight|Bishop|Queen|King|Pawn) ([a-h][1-8])$/
-    b[$3]= eval($2).new($1.to_sym)
+  when /^a ?([wb]) ?([rnbqkp]) ?([a-h][1-8])$/i
+    klass = case $2
+            when 'r' then Rook
+            when 'n' then Knight
+            when 'b' then Bishop
+            when 'q' then Queen
+            when 'k' then King
+            when 'p' then Pawn
+            end
+    color = if $1 == 'w' then :white else :black end
+    b[$3]= klass.new(color)
     b.pieces << b[$3]
-  when /^r ([a-h][1-8])$/
+  when /^r ?([a-h][1-8])$/
     b.pop($1)
-  when /^m ([a-h][1-8]) ([a-h][1-8])$/
-    b.move Move.new $1, $2, b[$1] if piece = b[$1]
-    b.move b.moves.first if b.moves.count == 1
+  when /^m ?([a-h][1-8]) ?([a-h][1-8])$/
+    if b[$1]
+      m = Move.new $1, $2, b[$1]
+      b.move m
+      moves << m
+      if b.moves.count == 1
+        m = b.moves.first
+        b.move m
+        moves << m
+      end
+    end
+  when 'u'
+    b.unmove moves.pop unless moves.empty
   when 't'
     b.toggle_turn
   when 'd'
